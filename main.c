@@ -1,31 +1,25 @@
 #include <stdio.h>
-#include "ztimer.h"
+#include "shell.h"
 
-void timer_callback(void *arg)
+int echo_command(int argc, char **argv)
 {
-    // Convert the argument to a string
-    char *message = (char *)arg;
+    for (int i = 1; i < argc; i++) {
+        printf("%s ", argv[i]);
+    }
+    printf("\n");
 
-    // Print the message
-    puts(message);
+    return 0;
 }
 
+SHELL_COMMAND(echo,"Echo a message", echo_command);
 
 int main(void)
 {
-    // Create a timer
-    ztimer_t timer = {
-        .callback = timer_callback,
-        .arg = "3 seconds have passed!"
-    };
+    // Buffer to store command line input
+    char buffer[SHELL_DEFAULT_BUFSIZE];
 
-    // Set the timer to fire in 3 seconds
-    ztimer_set(ZTIMER_SEC, &timer, 3);
-
-    // Sleep for 5 seconds
-    ztimer_sleep(ZTIMER_SEC, 5);
-
-    puts("5 seconds have passed!");
+    // Start the shell
+    shell_run(NULL, buffer, SHELL_DEFAULT_BUFSIZE);
 
     return 0;
 }

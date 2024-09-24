@@ -13,7 +13,7 @@ RIOTBASE ?= $(CURDIR)/RIOT
 DEVELHELP ?= 1
 
 # This board requires a start sleep to actually catch the printed output
-USEMODULE += ztimer_sec
+USEMODULE += shell
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
