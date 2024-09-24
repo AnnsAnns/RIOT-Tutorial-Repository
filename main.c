@@ -1,25 +1,21 @@
 #include <stdio.h>
-#include "shell.h"
 
-int echo_command(int argc, char **argv)
-{
-    for (int i = 1; i < argc; i++) {
-        printf("%s ", argv[i]);
-    }
-    printf("\n");
+#include "thread.h"
 
-    return 0;
+char my_thread_stack[THREAD_STACKSIZE_MAIN];
+
+void *my_first_thread(void *arg) {
+  (void)arg;  // Variable not used
+
+  puts("Hello, from the thread!");
+
+  return NULL;
 }
 
-SHELL_COMMAND(echo,"Echo a message", echo_command);
+int main(void) {
+    thread_create(my_thread_stack, sizeof(my_thread_stack),
+            THREAD_PRIORITY_MAIN - 1, 0, my_first_thread, NULL,
+            "My first thread"); 
 
-int main(void)
-{
-    // Buffer to store command line input
-    char buffer[SHELL_DEFAULT_BUFSIZE];
-
-    // Start the shell
-    shell_run(NULL, buffer, SHELL_DEFAULT_BUFSIZE);
-
-    return 0;
+    puts("Hello, from the main thread!");
 }
