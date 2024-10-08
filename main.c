@@ -1,21 +1,45 @@
-#include <stdio.h>
+#include "periph/gpio.h"
+#include "board.h"
+#include "ztimer.h"
 
-#include "thread.h"
+// Define the LED0 pin and mode
+gpio_t led0 = GPIO_PIN(1, 9);
+gpio_mode_t led0_mode = GPIO_OUT;
 
-char my_thread_stack[THREAD_STACKSIZE_MAIN];
+// Define the LED0 pin and mode
+gpio_t led1 = GPIO_PIN(1, 10);
+gpio_mode_t led1_mode = GPIO_OUT;
 
-void *my_first_thread(void *arg) {
-  (void)arg;  // Variable not used
+// Define the button pin
+gpio_t button = GPIO_PIN(1, 2);
 
-  puts("Hello, from the thread!");
-
-  return NULL;
+void button_callback (void *arg)
+{
+    (void) arg; /* the argument is not used */
+    if (!gpio_read(button)) {
+        gpio_set(led1);
+    }
+    else {
+        gpio_clear(led1);
+    }
 }
 
 int main(void) {
-    thread_create(my_thread_stack, sizeof(my_thread_stack),
-            THREAD_PRIORITY_MAIN - 1, 0, my_first_thread, NULL,
-            "My first thread"); 
+  // Initialize the LED0 pin
+  gpio_init(led0, led0_mode);
+  // Turn off the LED0 pin
+  gpio_clear(led0);
 
-    puts("Hello, from the main thread!");
+  // Initialize the LED1 pin
+  gpio_init(led1, led1_mode);
+  // Turn off the LED1 pin
+  gpio_clear(led1);
+
+  // Initialize the button pin
+  gpio_init_int(button, GPIO_IN_PU, GPIO_BOTH, button_callback, NULL);
+
+  while (1) {
+    gpio_toggle(led0);
+    ztimer_sleep(ZTIMER_MSEC, 500);
+  }
 }
