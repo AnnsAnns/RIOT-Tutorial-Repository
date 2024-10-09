@@ -2,7 +2,7 @@
 APPLICATION = hello-world
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= feather-nrf52840-sense
+BOARD ?= native
 
 # Build in Docker by default (set to 0 to build locally)
 BUILD_IN_DOCKER ?= 1
@@ -15,15 +15,12 @@ RIOTBASE ?= $(CURDIR)/RIOT
 # development process:
 DEVELHELP ?= 1
 
-# This board requires a start sleep to actually catch the printed output
-USEMODULE += ztimer_sec
-
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
 # Tell the build system to use the Rust crate here
 FEATURES_REQUIRED += rust_target
-APPLICATION_RUST_MODULE = hello_world
+APPLICATION_RUST_MODULE = hello_world # Make sure this matches the name of the Rust crate
 BASELIBS += $(APPLICATION_RUST_MODULE).module
 
 include $(RIOTBASE)/Makefile.include
