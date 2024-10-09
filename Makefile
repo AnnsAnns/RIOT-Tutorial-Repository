@@ -1,8 +1,11 @@
 # name of your application
 APPLICATION = hello-world
 
-# Change this to your board if you want to build for a different board
+# If no BOARD is found in the environment, use this default:
 BOARD ?= feather-nrf52840-sense
+
+# Build in Docker by default (set to 0 to build locally)
+BUILD_IN_DOCKER ?= 1
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/RIOT
@@ -13,17 +16,14 @@ RIOTBASE ?= $(CURDIR)/RIOT
 DEVELHELP ?= 1
 
 # This board requires a start sleep to actually catch the printed output
-USEMODULE += shell
-
-# Add the gpio module to the build
-USEMODULE += periph_gpio
-USEMODULE += periph_gpio_irq
-
-# Enable the milliseconds timer.
-USEMODULE += ztimer
-USEMODULE += ztimer_msec
+USEMODULE += ztimer_sec
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
+
+# Tell the build system to use the Rust crate here
+FEATURES_REQUIRED += rust_target
+APPLICATION_RUST_MODULE = hello_world
+BASELIBS += $(APPLICATION_RUST_MODULE).module
 
 include $(RIOTBASE)/Makefile.include
