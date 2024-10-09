@@ -5,7 +5,7 @@ APPLICATION = hello-world
 BOARD ?= native
 
 # Build in Docker by default (set to 0 to build locally)
-BUILD_IN_DOCKER ?= 1
+BUILD_IN_DOCKER ?= 0
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/RIOT
@@ -20,7 +20,7 @@ QUIET ?= 1
 
 # Tell the build system to use the Rust crate here
 FEATURES_REQUIRED += rust_target
-APPLICATION_RUST_MODULE = hello_world # Make sure this matches the name of the Rust crate
+APPLICATION_RUST_MODULE = hello_world
 BASELIBS += $(APPLICATION_RUST_MODULE).module
 
 include $(RIOTBASE)/Makefile.include
