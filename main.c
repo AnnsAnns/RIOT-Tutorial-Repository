@@ -1,45 +1,45 @@
-#include "periph/gpio.h"
+#include <stdio.h>
+
 #include "board.h"
 #include "ztimer.h"
-
-// Define the LED0 pin and mode
-gpio_t led0 = GPIO_PIN(1, 9);
-gpio_mode_t led0_mode = GPIO_OUT;
-
-// Define the LED0 pin and mode
-gpio_t led1 = GPIO_PIN(1, 10);
-gpio_mode_t led1_mode = GPIO_OUT;
-
-// Define the button pin
-gpio_t button = GPIO_PIN(1, 2);
-
-void button_callback (void *arg)
-{
-    (void) arg; /* the argument is not used */
-    if (!gpio_read(button)) {
-        gpio_set(led1);
-    }
-    else {
-        gpio_clear(led1);
-    }
-}
+#include "saul_reg.h"
 
 int main(void) {
-  // Initialize the LED0 pin
-  gpio_init(led0, led0_mode);
-  // Turn off the LED0 pin
-  gpio_clear(led0);
+  ztimer_sleep(ZTIMER_MSEC, 5000);
+  puts("Welcome to SAUL magic!");
 
-  // Initialize the LED1 pin
-  gpio_init(led1, led1_mode);
-  // Turn off the LED1 pin
-  gpio_clear(led1);
+  // Define our temperature sensor
+  saul_reg_t *temperature_sensor = saul_reg_find_type(SAUL_SENSE_TEMP);
 
-  // Initialize the button pin
-  gpio_init_int(button, GPIO_IN_PU, GPIO_BOTH, button_callback, NULL);
+  // Exit if we can't find a temperature sensor
+  if (!temperature_sensor) {
+    puts("No temperature sensor found");
+    return 1;
+  } else {
+    // Otherwise print the name of the temperature sensor
+    // and continue the program
+    printf("Temperature sensor found: %s\n", temperature_sensor->name);
+  }
 
   while (1) {
-    gpio_toggle(led0);
-    ztimer_sleep(ZTIMER_MSEC, 500);
+    // Define a variable to store the temperature
+    phydat_t temperature;
+
+    // Read the temperature sensor
+    // and store the result in the temperature variable
+    // saul_reg_read returns the dimension of the data read (1 in this case)
+    int dimension = saul_reg_read(temperature_sensor, &temperature);
+
+    // If the read was successful (1 or more dimensions), print the temperature
+    if (dimension <= 0) {
+      puts("Error reading temperature sensor");
+      return 1;
+    }
+
+    // Dump the temperature to the console
+    phydat_dump(&temperature, dimension);
+
+    // Sleep for 1 seconds
+    ztimer_sleep(ZTIMER_MSEC, 1000);
   }
 }

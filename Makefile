@@ -15,9 +15,9 @@ DEVELHELP ?= 1
 # This board requires a start sleep to actually catch the printed output
 USEMODULE += shell
 
-# Add the gpio module to the build
-USEMODULE += periph_gpio
-USEMODULE += periph_gpio_irq
+# Add the SAUL module to the application
+USEMODULE += saul
+USEMODULE += saul_default
 
 # Enable the milliseconds timer.
 USEMODULE += ztimer
